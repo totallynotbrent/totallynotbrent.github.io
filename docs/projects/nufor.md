@@ -10,4 +10,4 @@ A computational fluid dynamics solver built from scratch — started as a 1D Eul
 - Live docs: [totallynotbrent.github.io/nuFor](https://totallynotbrent.github.io/nuFor)
 - Source: [github.com/totallynotbrent/nufor](https://github.com/totallynotbrent/nufor)
 
-[[index|Back home]] · [[bread]] · [[sage]]
+[[index|Back home]] · [[projects/bread]] · [[projects/sage]]

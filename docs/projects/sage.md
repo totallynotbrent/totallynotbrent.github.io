@@ -10,4 +10,4 @@ An AI tutor built around the Socratic method — it probes what you know, quizze
 - Live docs: [totallynotbrent.github.io/sage](https://totallynotbrent.github.io/sage)
 - Source: [github.com/totallynotbrent/sage](https://github.com/totallynotbrent/sage)
 
-[[index|Back home]] · [[bread]] · [[nufor]]
+[[index|Back home]] · [[projects/bread]] · [[projects/nufor]]

@@ -9,9 +9,9 @@ Welcome. I'm Brent. This is my little hypertext garden — a home for the things
 
 Things I build for fun, mostly self-hosted. Each one has its own corner:
 
-- [[bread]] — a Discord bot with a memory and a personality.
-- [[sage]] — an AI tutor that teaches by asking, not lecturing.
-- [[nufor]] — a personal CFD solver, from a 1D Euler toy to a full solver with a web UI.
+- [[projects/bread]] — a Discord bot with a memory and a personality.
+- [[projects/sage]] — an AI tutor that teaches by asking, not lecturing.
+- [[projects/nufor]] — a personal CFD solver, from a 1D Euler toy to a full solver with a web UI.
 
 ## Elsewhere
 

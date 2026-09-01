@@ -10,4 +10,4 @@ A Discord bot that remembers. It keeps notes on the people it talks to, recalls 
 - Live docs: [totallynotbrent.github.io/bread](https://totallynotbrent.github.io/bread)
 - Source: [github.com/totallynotbrent/bread](https://github.com/totallynotbrent/bread)
 
-[[index|Back home]] · [[sage]] · [[nufor]]
+[[index|Back home]] · [[projects/sage]] · [[projects/nufor]]
