@@ -41,6 +41,11 @@ configuration:
         textHighlight: "#b3aa0288"
 
 plugins:
+  - source: "./plugins/flow-hero"
+    enabled: true
+    layout:
+      position: beforeBody
+      priority: 0
   - source: "@quartz-community/created-modified-date"
     enabled: true
     options:

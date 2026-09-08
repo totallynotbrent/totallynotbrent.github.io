@@ -1,0 +1,29 @@
+{
+  "name": "@totallynotbrent/flow-hero",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./components": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "quartz": {
+    "name": "flow-hero",
+    "displayName": "Flow Hero",
+    "category": ["component"],
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 0,
+    "defaultEnabled": true,
+    "defaultOptions": {},
+    "components": {
+      "FlowHero": {
+        "displayName": "Flow Hero",
+        "defaultPosition": "beforeBody",
+        "defaultPriority": 0
+      }
+    }
+  }
+}
