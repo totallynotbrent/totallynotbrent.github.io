@@ -47,7 +47,7 @@ plugins:
       position: beforeBody
       priority: 0
   - source: "@quartz-community/created-modified-date"
-    enabled: true
+    enabled: false
     options:
       defaultDateType: modified
       priority: [frontmatter, git, filesystem]
@@ -64,7 +64,7 @@ plugins:
     enabled: true
     order: 40
   - source: "@quartz-community/table-of-contents"
-    enabled: true
+    enabled: false
     order: 50
     layout: {position: right, priority: 30}
   - source: "@quartz-community/crawl-links"
@@ -107,45 +107,50 @@ plugins:
   - source: "@quartz-community/tag-page"
     enabled: true
   - source: "@quartz-community/explorer"
-    enabled: true
+    enabled: false
     layout: {position: left, priority: 50}
   - source: "@quartz-community/graph"
-    enabled: true
+    enabled: false
     layout: {position: right, priority: 10}
   - source: "@quartz-community/search"
-    enabled: true
+    enabled: false
     layout: {position: left, priority: 20, group: toolbar, groupOptions: {grow: true}}
   - source: "@quartz-community/backlinks"
-    enabled: true
+    enabled: false
     layout: {position: right, priority: 50}
   - source: "@quartz-community/article-title"
     enabled: true
     layout: {position: beforeBody, priority: 10}
   - source: "@quartz-community/content-meta"
-    enabled: true
+    enabled: false
     layout: {position: beforeBody, priority: 20}
   - source: "@quartz-community/tag-list"
     enabled: false
   - source: "@quartz-community/page-title"
-    enabled: true
+    enabled: false
     layout: {position: left, priority: 10}
   - source: "@quartz-community/darkmode"
-    enabled: true
+    enabled: false
     layout: {position: left, priority: 30, group: toolbar}
   - source: "@quartz-community/reader-mode"
-    enabled: true
+    enabled: false
     layout: {position: left, priority: 35, group: toolbar}
   - source: "@quartz-community/breadcrumbs"
-    enabled: true
+    enabled: false
     layout: {position: beforeBody, priority: 5, condition: not-index}
   - source: "@quartz-community/footer"
     enabled: true
-    options: {links: {GitHub: "https://github.com/totallynotbrent"}}
+    options:
+      links:
+        bread: "https://totallynotbrent.github.io/bread"
+        sage: "https://totallynotbrent.github.io/sage"
+        nuFor: "https://totallynotbrent.github.io/nuFor"
+        GitHub: "https://github.com/totallynotbrent"
     layout: {position: footer, priority: 50}
   - source: "@quartz-community/recent-notes"
     enabled: false
   - source: "@quartz-community/spacer"
-    enabled: true
+    enabled: false
     options: {}
     order: 25
     layout: {position: left, priority: 25, display: mobile-only}
@@ -154,7 +159,7 @@ plugins:
     options: {}
     order: 50
   - source: "@quartz-community/note-properties"
-    enabled: true
+    enabled: false
     options:
       includeAll: false
       includedProperties: [description, tags, aliases]

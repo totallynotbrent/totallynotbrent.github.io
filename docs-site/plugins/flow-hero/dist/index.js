@@ -67,6 +67,16 @@ const afterDOMLoaded = `
       "  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y);",
       "}",
       "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.0+vec2(17.3); a*=0.5; } return v; }",
+      "float bayer(vec2 p){",
+      // 4x4 ordered-dither matrix, normalized to [0,1)
+      "  const float m[16] = float[16](",
+      "    0.0/16.0, 8.0/16.0, 2.0/16.0, 10.0/16.0,",
+      "    12.0/16.0, 4.0/16.0, 14.0/16.0, 6.0/16.0,",
+      "    3.0/16.0, 11.0/16.0, 1.0/16.0, 9.0/16.0,",
+      "    15.0/16.0, 7.0/16.0, 13.0/16.0, 5.0/16.0);",
+      "  vec2 ip = mod(floor(p), 4.0);",
+      "  return m[int(ip.y)*4 + int(ip.x)];",
+      "}",
       "void main(){",
       "  vec2 uv = gl_FragCoord.xy/uRes.xy;",
       "  vec2 p = uv*vec2(uRes.x/uRes.y,1.0)*2.0;",
@@ -79,6 +89,10 @@ const afterDOMLoaded = `
       "  vec3 c = vec3(0.95,0.62,0.30);",
       "  vec3 col = mix(a, b, smoothstep(0.35,0.85,f));",
       "  col = mix(col, c, smoothstep(0.82,1.0,f)*0.55);",
+      // ordered dithering: posterize to 4 levels, then add a bayer offset
+      "  float levels = 4.0;",
+      "  float dith = bayer(gl_FragCoord.xy) - 0.5;",
+      "  col = floor(col * levels + dith) / levels;",
       "  gl_FragColor = vec4(col,1.0);",
       "}",
     ].join(String.fromCharCode(10));
