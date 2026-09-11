@@ -23,6 +23,21 @@
         "displayName": "Flow Hero",
         "defaultPosition": "beforeBody",
         "defaultPriority": 0
+      },
+      "FlowBackground": {
+        "displayName": "Flow Background",
+        "defaultPosition": "head",
+        "defaultPriority": 0
+      },
+      "ProjectNav": {
+        "displayName": "Project Nav",
+        "defaultPosition": "left",
+        "defaultPriority": 50
+      },
+      "SageSnippet": {
+        "displayName": "Sage Snippet",
+        "defaultPosition": "right",
+        "defaultPriority": 10
       }
     }
   }

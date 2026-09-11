@@ -1,8 +1,12 @@
 ---
-title: Brent
-description: A little corner of the internet about me.
+title: totallynotbrent
+description: Brent, aerospace engineering student and hobbyist builder.
 ---
 
-Hi, I'm Brent. I build small self-hosted things for fun — a Discord bot with a memory, an AI tutor that asks instead of lectures, and a CFD solver I wrote from scratch. This page is just me, no structure, no filing system.
+## Projects
 
-If you want to see what I've made, the links at the bottom take you straight to each project.
+- [bread](https://totallynotbrent.github.io/bread): a Discord bot with memory
+
+- [Sage](https://totallynotbrent.github.io/Sage/): an AI tutor that asks instead of lecturing
+
+- [nuFor](https://totallynotbrent.github.io/nuFor): a CFD solver made from scratch
