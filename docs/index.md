@@ -1,6 +1,7 @@
 ---
-title: totallynotbrent
-description: Brent, aerospace engineering student and hobbyist builder.
+title: Brent
+description: aerospace engineering student
+socialImage: og-image.png
 ---
 
 ## Projects
