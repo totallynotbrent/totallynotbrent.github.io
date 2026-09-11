@@ -591,10 +591,21 @@ const centerTopAfterDOMLoaded = `
     var offset = Math.max(0, Math.round(contentTop - base));
     body.style.setProperty("--center-top", offset + "px");
   }
+
+  // same-origin project links are external docs sites; force a full-page
+  // navigation instead of the quartz router's spa fetch so they don't inherit
+  // this page's injected styles
+  function ignoreExternalLinks() {
+    document.querySelectorAll("a.external").forEach(function (a) {
+      a.setAttribute("data-router-ignore", "");
+    });
+  }
+
   measure();
+  ignoreExternalLinks();
   requestAnimationFrame(function () { requestAnimationFrame(measure); });
   window.addEventListener("load", measure);
-  document.addEventListener("nav", measure);
+  document.addEventListener("nav", function () { measure(); ignoreExternalLinks(); });
   window.addEventListener("resize", measure);
 })();
 `;
