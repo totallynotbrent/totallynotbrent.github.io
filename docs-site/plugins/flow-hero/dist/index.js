@@ -27,6 +27,12 @@ const css = `
   font-size: 0.95rem;
   line-height: 1.6;
 }
+.intro-blurb .signature {
+  display: block;
+  margin-top: 1rem;
+  max-width: 105px;
+  height: auto;
+}
 
 /* full-page isocontour background, behind everything */
 .flow-bg {
@@ -49,6 +55,40 @@ const css = `
 article,
 body {
   background: transparent !important;
+}
+
+/* no scroll: the page fits one screen */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+.page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* center column keeps its existing vertical centering (the anchor) */
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* sidebars share the center column's top line via a measured padding offset */
+.page > #quartz-body .sidebar.left,
+.page > #quartz-body .sidebar.right {
+  position: static !important;
+  height: 100vh !important;
+  width: auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2rem !important;
+  top: unset !important;
+  padding-top: calc(2rem + var(--center-top, 0px)) !important;
+  align-items: flex-start;
 }
 
 /* right dithered sage snippet — phone aspect, 250px wide like the graph box */
@@ -102,14 +142,6 @@ article ul {
 article ul li::marker {
   content: "-  ";
   color: var(--tertiary, #f6c177);
-}
-
-/* symmetric sidebar padding so left and right content sit evenly off the center */
-.right.sidebar {
-  padding-top: 6rem;
-}
-.right.sidebar > * {
-  margin-bottom: 1.2rem;
 }
 `;
 
@@ -391,6 +423,27 @@ const bgAfterDOMLoaded = `
 })();
 `;
 
+const centerTopAfterDOMLoaded = `
+(function () {
+  function measure() {
+    var body = document.getElementById("quartz-body");
+    var center = body && body.querySelector(".center");
+    var article = center && center.firstElementChild;
+    var left = body && body.querySelector(".sidebar.left");
+    if (!body || !center || !article || !left) return;
+    var base = 32; // matches the sidebar's 2rem base padding
+    var contentTop = article.getBoundingClientRect().top - body.getBoundingClientRect().top;
+    var offset = Math.max(0, Math.round(contentTop - base));
+    body.style.setProperty("--center-top", offset + "px");
+  }
+  measure();
+  requestAnimationFrame(function () { requestAnimationFrame(measure); });
+  window.addEventListener("load", measure);
+  document.addEventListener("nav", measure);
+  window.addEventListener("resize", measure);
+})();
+`;
+
 import { h } from "preact";
 
 const FlowHeroComponent = () => {
@@ -402,6 +455,7 @@ const FlowHeroComponent = () => {
 const ProjectNavComponent = () => {
   return h("div", { class: "intro-blurb" }, [
     h("p", {}, "Hey, I'm Brent. Aerospace engineering student, and I build small self-hosted things for fun."),
+    h("img", { class: "signature", src: "/static/signature.png", alt: "Brent's signature" }),
   ]);
 };
 
@@ -429,7 +483,7 @@ SageSnippetComponent.afterDOMLoaded = sageAfterDOMLoaded;
 SageSnippetComponent.displayName = "SageSnippet";
 
 FlowBackgroundComponent.css = css;
-FlowBackgroundComponent.afterDOMLoaded = bgAfterDOMLoaded;
+FlowBackgroundComponent.afterDOMLoaded = bgAfterDOMLoaded + centerTopAfterDOMLoaded;
 FlowBackgroundComponent.displayName = "FlowBackground";
 
 export { FlowHeroComponent as FlowHero, ProjectNavComponent as ProjectNav, SageSnippetComponent as SageSnippet, FlowBackgroundComponent as FlowBackground };
