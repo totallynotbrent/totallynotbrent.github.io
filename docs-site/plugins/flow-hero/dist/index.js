@@ -9,9 +9,12 @@ const css = `
   border: 1px solid var(--lightgray, #444440);
   box-sizing: border-box;
   overflow: hidden;
-  background: #1a1a19;
+  background: rgba(26, 26, 25, 0.62);
   position: relative;
   border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 .flow-hero canvas {
   width: 100%;
@@ -21,6 +24,9 @@ const css = `
 }
 
 /* left intro blurb */
+.intro-blurb {
+  margin-top: 1.5rem;
+}
 .intro-blurb p {
   margin: 0 0 0.5rem;
   color: var(--darkgray, #f0efe8);
@@ -32,13 +38,61 @@ const css = `
   margin-top: 1rem;
   max-width: 105px;
   height: auto;
+  /* smooth gold -> black morph when swapping to light mode */
+  transition: filter 0.5s ease;
+}
+:root[saved-theme="light"] .intro-blurb .signature {
+  filter: brightness(0) saturate(0);
+}
+.intro-blurb .signature-github {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--secondary, #c4a7e7);
+  text-decoration: none;
+}
+.intro-blurb .signature-github:hover {
+  text-decoration: underline;
+}
+
+/* staggered per-element fade-up, all under 3s total
+   (opacity + translateY on leaf elements only — never on .center, which
+   must stay transform-free so the fixed background isn't contained) */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+/* title journey: 0.5 -> 1.2s */
+.page-title {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+/* blurb (0.7 -> 1.4s) */
+.intro-blurb p {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}
+/* signature, github, cfd (0.9 -> 1.6s) */
+.intro-blurb .signature,
+.intro-blurb .signature-github,
+.flow-hero {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+}
+/* projects (1.1 -> 1.8s) */
+.center article {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.1s both;
+}
+/* sage snippet (1.3 -> 2.0s) */
+.sage-snippet {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.3s both;
 }
 
 /* full-page isocontour background, behind everything */
 .flow-bg {
   position: fixed;
-  inset: 0;
-  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
   pointer-events: none;
 }
 .flow-bg canvas {
@@ -49,46 +103,112 @@ const css = `
   filter: blur(9px);
 }
 
-/* let the background show through: transparent page/body layers */
+/* let the background show through: transparent page/body layers (not body — it hosts the sunrise) */
 .page,
 .center,
-article,
-body {
+article {
   background: transparent !important;
 }
 
-/* no scroll: the page fits one screen */
-html,
-body {
-  height: 100%;
-  overflow: hidden;
+/* sunrise theme transition: pass through warm rose-pine tones on toggle */
+@keyframes sunrise-to-light {
+  0%   { background-color: rgba(26, 26, 25, 0.92); }
+  35%  { background-color: rgba(235, 188, 186, 0.88); }
+  65%  { background-color: rgba(246, 193, 119, 0.90); }
+  100% { background-color: rgba(246, 239, 228, 0.86); }
 }
-.page {
-  height: 100vh;
-  overflow: hidden;
+@keyframes sunrise-to-dark {
+  0%   { background-color: rgba(246, 239, 228, 0.86); }
+  35%  { background-color: rgba(246, 193, 119, 0.90); }
+  65%  { background-color: rgba(235, 188, 186, 0.88); }
+  100% { background-color: rgba(26, 26, 25, 0.92); }
+}
+:root[saved-theme="light"] body {
+  animation: sunrise-to-light 1.6s ease both;
+  background-color: rgba(246, 239, 228, 0.86);
+}
+:root[saved-theme="dark"] body {
+  animation: sunrise-to-dark 1.6s ease both;
+  background-color: rgba(26, 26, 25, 0.92);
+}
+:root[saved-theme="light"] .page,
+:root[saved-theme="light"] .center,
+:root[saved-theme="light"] article {
+  background: transparent !important;
 }
 
-/* center column keeps its existing vertical centering (the anchor) */
-.center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 100vh;
+/* desktop only: no scroll + vertically centered columns */
+@media (min-width: 800px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+  .page {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* center column keeps its existing vertical centering (the anchor) */
+  .center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  /* sidebars share the center column's top line via a measured padding offset */
+  .page > #quartz-body .sidebar.left,
+  .page > #quartz-body .sidebar.right {
+    position: static !important;
+    height: 100vh !important;
+    width: auto !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2rem !important;
+    top: unset !important;
+    padding-top: calc(2rem + var(--center-top, 0px)) !important;
+    align-items: flex-start;
+  }
 }
 
-/* sidebars share the center column's top line via a measured padding offset */
-.page > #quartz-body .sidebar.left,
-.page > #quartz-body .sidebar.right {
-  position: static !important;
-  height: 100vh !important;
-  width: auto !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 2rem !important;
-  top: unset !important;
-  padding-top: calc(2rem + var(--center-top, 0px)) !important;
-  align-items: flex-start;
+/* mobile: restore normal scroll + natural stacking */
+@media (max-width: 800px) {
+  html,
+  body {
+    height: auto;
+    overflow: auto;
+  }
+  .page {
+    height: auto;
+    overflow: visible;
+  }
+  .center {
+    min-height: 0;
+  }
+  /* stack the left sidebar vertically: title on top, blurb under it */
+  .page > #quartz-body .sidebar.left {
+    flex-direction: column !important;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .intro-blurb {
+    margin-top: 1rem;
+  }
+  /* sage snippet matches the cfd width, no gap above it */
+  .page > #quartz-body .sidebar.right {
+    grid-area: grid-sidebar-right;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  .sage-snippet {
+    width: 100%;
+    max-width: 100%;
+    height: 200px;
+    aspect-ratio: auto;
+    margin-top: 0;
+  }
 }
 
 /* right dithered sage snippet — phone aspect, 250px wide like the graph box */
@@ -99,8 +219,11 @@ body {
   border: 1px solid var(--lightgray, #444440);
   border-radius: 12px;
   overflow: hidden;
-  background: #191724;
+  background: rgba(25, 23, 36, 0.62);
   position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 .sage-snippet canvas {
   width: 100%;
@@ -153,14 +276,18 @@ const afterDOMLoaded = `
 
   function start(gl, prog, buf, loc, uRes, uTime) {
     var t0 = performance.now();
-    function frame() {
-      gl.useProgram(prog);
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform2f(uRes, RW, RH);
-      gl.uniform1f(uTime, (performance.now() - t0) / 1000);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    var last = 0;
+    function frame(now) {
+      if (now - last >= 33) {
+        last = now;
+        gl.useProgram(prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform2f(uRes, RW, RH);
+        gl.uniform1f(uTime, (performance.now() - t0) / 1000);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
       raf = requestAnimationFrame(frame);
     }
     raf = requestAnimationFrame(frame);
@@ -188,7 +315,7 @@ const afterDOMLoaded = `
       "  vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);",
       "  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y);",
       "}",
-      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.0+vec2(17.3); a*=0.5; } return v; }",
+      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p=p*2.0+vec2(17.3); a*=0.5; } return v; }",
       "void main(){",
       "  vec2 uv = gl_FragCoord.xy/uRes.xy;",
       "  vec2 p = uv*vec2(uRes.x/uRes.y,1.0)*2.0;",
@@ -303,19 +430,45 @@ const sageAfterDOMLoaded = `
       var N = pal.length;
 
       canvas.width = w; canvas.height = h;
-      var out = ctx.createImageData(w, h);
-      for (var y = 0; y < h; y++) {
-        for (var x = 0; x < w; x++) {
-          var i = (y * w + x) * 4;
-          var g = luma([id.data[i], id.data[i+1], id.data[i+2]]) / 255;
-          var val = g * (N - 1);
-          var b = BAYER[y & 3][x & 3] / 16 - 0.5;
-          var idx = Math.max(0, Math.min(N - 1, Math.round(val + b)));
-          var c = pal[idx];
-          out.data[i] = c[0]; out.data[i+1] = c[1]; out.data[i+2] = c[2]; out.data[i+3] = 255;
+
+      // pixelation bloom: coarse blocks -> fine, ease-out, ~2.5s.
+      // runs immediately so the fade-in reveals the coarse frame resolving.
+      var DUR = 2500;
+      function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+      function ditherAt(res) {
+        // res = block size in px (big = coarse). sample one luma per block.
+        var out = ctx.createImageData(w, h);
+        for (var y = 0; y < h; y++) {
+          var by = Math.floor(y / res) * res;
+          for (var x = 0; x < w; x++) {
+            var bx = Math.floor(x / res) * res;
+            var gi = (by * w + bx) * 4;
+            var g = luma([id.data[gi], id.data[gi+1], id.data[gi+2]]) / 255;
+            var val = g * (N - 1);
+            var b = BAYER[y & 3][x & 3] / 16 - 0.5;
+            var idx = Math.max(0, Math.min(N - 1, Math.round(val + b)));
+            var c = pal[idx];
+            var i = (y * w + x) * 4;
+            out.data[i] = c[0]; out.data[i+1] = c[1]; out.data[i+2] = c[2]; out.data[i+3] = 255;
+          }
         }
+        return out;
       }
-      ctx.putImageData(out, 0, 0);
+
+      function drawFrame(t0, now) {
+        var t = Math.min(1, (now - t0) / DUR);
+        var e = easeOut(t);
+        // block size sweeps from 32px (chunky) down to 1px (full detail)
+        var res = Math.max(1, Math.round(32 * (1 - e)));
+        ctx.putImageData(ditherAt(res), 0, 0);
+        if (t < 1) requestAnimationFrame(function (n) { drawFrame(t0, n); });
+      }
+
+      // start on the coarse frame immediately so the fade-in reveals the
+      // pixelated image mid-bloom, resolving to full detail
+      var t0 = performance.now();
+      requestAnimationFrame(function (n) { drawFrame(t0, n); });
     };
     img.src = "/static/wallpaper.jpg";
   }
@@ -333,20 +486,24 @@ const bgAfterDOMLoaded = `
 
   function start(gl, prog, buf, loc, uRes, uTime) {
     var t0 = performance.now();
-    function frame() {
-      var w = gl.canvas.clientWidth, h = gl.canvas.clientHeight;
-      if (w === 0 || h === 0) { raf = requestAnimationFrame(frame); return; }
-      if (gl.canvas.width !== w || gl.canvas.height !== h) {
-        gl.canvas.width = w; gl.canvas.height = h;
-        gl.viewport(0, 0, w, h);
+    var last = 0;
+    function frame(now) {
+      if (now - last >= 33) {
+        last = now;
+        var w = gl.canvas.clientWidth, h = gl.canvas.clientHeight;
+        if (w === 0 || h === 0) { raf = requestAnimationFrame(frame); return; }
+        if (gl.canvas.width !== w || gl.canvas.height !== h) {
+          gl.canvas.width = w; gl.canvas.height = h;
+          gl.viewport(0, 0, w, h);
+        }
+        gl.useProgram(prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform2f(uRes, w, h);
+        gl.uniform1f(uTime, (performance.now() - t0) / 1000);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
-      gl.useProgram(prog);
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform2f(uRes, w, h);
-      gl.uniform1f(uTime, (performance.now() - t0) / 1000);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       raf = requestAnimationFrame(frame);
     }
     raf = requestAnimationFrame(frame);
@@ -371,17 +528,15 @@ const bgAfterDOMLoaded = `
       "  vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);",
       "  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y);",
       "}",
-      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p=p*2.0+vec2(9.3); a*=0.5; } return v; }",
+      "float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<3;i++){ v+=a*noise(p); p=p*2.0+vec2(9.3); a*=0.5; } return v; }",
       "void main(){",
       "  vec2 uv = gl_FragCoord.xy/uRes.xy;",
       "  vec2 p = uv * vec2(uRes.x/uRes.y, 1.0) * 3.5;",
       "  float t = uTime * 0.05;",
       "  float n = fbm(p + vec2(t, t*0.6));",
-      // isocontour: ring distance from the field value
       "  float cells = 10.0;",
       "  float g = fract(n * cells);",
       "  float ring = smoothstep(0.0, 0.03, g) * (1.0 - smoothstep(0.03, 0.06, g));",
-      // rose-pine gradient across the field (darkened)
       "  vec3 iris = vec3(0.45,0.35,0.62);",
       "  vec3 foam = vec3(0.35,0.52,0.55);",
       "  vec3 gold = vec3(0.55,0.42,0.22);",
@@ -454,8 +609,9 @@ const FlowHeroComponent = () => {
 
 const ProjectNavComponent = () => {
   return h("div", { class: "intro-blurb" }, [
-    h("p", {}, "Hey, I'm Brent. Aerospace engineering student, and I build small self-hosted things for fun."),
+    h("p", {}, "Hey, I'm Brent. Aerospace Engineering student, and I build small self-hosted things for fun."),
     h("img", { class: "signature", src: "/static/signature.png", alt: "Brent's signature" }),
+    h("a", { class: "signature-github", href: "https://github.com/totallynotbrent", target: "_blank", rel: "noopener" }, "GitHub"),
   ]);
 };
 

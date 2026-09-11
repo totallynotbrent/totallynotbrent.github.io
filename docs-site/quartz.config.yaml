@@ -23,8 +23,8 @@ configuration:
       code: JetBrains Mono
     colors:
       lightMode:
-        light: "#faf6f0"
-        lightgray: "#e8e2d8"
+        light: "#f6efe4"
+        lightgray: "#eae1d2"
         gray: "#b0a89a"
         darkgray: "#4a4438"
         dark: "#2b2620"
@@ -51,8 +51,8 @@ plugins:
   - source: { name: FlowBackground, repo: "./plugins/flow-hero" }
     enabled: true
     layout:
-      position: header
-      priority: 0
+      position: beforeBody
+      priority: -1
   - source: { name: ProjectNav, repo: "./plugins/flow-hero" }
     enabled: true
     layout:
